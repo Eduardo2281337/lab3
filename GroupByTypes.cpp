@@ -57,7 +57,7 @@ void GroupByTypes::PrintFileTypesListAndPercents(const QMap<QString, qint64>& Fi
     }
     for (auto&& x : FileTypesPercantage) {
         out << qSetFieldWidth(15) <<   "*." + x.second <<
-                    qSetFieldWidth(10) << FileTypesList.value(x.second) / 1024 <<
+                    qSetFieldWidth(10) << FileTypesList.value(x.second) / 1024.0 <<
                     qSetFieldWidth(3) << "KB";
                     if (x.first < 0) {
                         out << qSetFieldWidth(8) << "< 0.01 %\n";
