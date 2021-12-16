@@ -3,24 +3,30 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QTextStream>
-
+#include "Data.h"
 
 class IExplore {
 public:
-    virtual void explore(const QString& path) = 0;
+    virtual QList<Data> explore(const QString& path) = 0;
     virtual ~IExplore() {}
 };
 
 class Explorer
 {
 private:
-    IExplore *p;
+    IExplore *p = nullptr;
 public:
+    Explorer() = default;
     explicit Explorer(IExplore* l) : p(l) {}
-    void explore(const QString& path) {
-        p->explore(path);
+    QList<Data> explore(const QString& path) {
+        return p->explore(path);
     }
-    void setStrategy(IExplore* strategy) { p = strategy; }
+    void setStrategy(IExplore* strategy) {
+        if (p)
+            delete p;
+        p = strategy;
+    }
+    ~Explorer() { if (p) delete p; }
 };
 
 namespace Common {
