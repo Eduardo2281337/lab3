@@ -19,7 +19,7 @@ SOURCES += \
         FileBrowserModel.cpp \
         GroupByFolders.cpp \
         GroupByTypes.cpp \
-        ListViewAdapter.cpp \
+        ListViewMediator.cpp \
         filemanager.cpp \
         main.cpp
 
@@ -36,7 +36,7 @@ HEADERS += \
     FileBrowserObserver.h \
     GroupByFolders.h \
     GroupByTypes.h \
-    ListViewAdapter.h \
+    ListViewMediator.h \
     filemanager.h
 
 FORMS += \

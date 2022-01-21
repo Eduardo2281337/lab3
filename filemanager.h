@@ -39,15 +39,12 @@ private:
 
 
     // стратегии
-    IExplore* FolderGrouping;
-    IExplore* TypesGrouping;
-    IExplore* groupingStrategy;
+    ExploreInterface* FolderGrouping;
+    ExploreInterface* TypesGrouping;
+    ExploreInterface* groupingStrategy;
 
-      // адаптеры
-    FileBrowserObserver* FileBrowserView;
-    FileBrowserObserver* list_view_adapter;
-    FileBrowserObserver* pie_chart;
-    FileBrowserObserver* bar_chart;
+      // наблюдатели
+    QList<FileBrowserObserver*> observers;
 
     QString path;
 };

@@ -7,7 +7,7 @@ class FileBrowserObserver
 {
 public:
     FileBrowserObserver() = default;
-    virtual void UpdateDisplay(const std::unique_ptr<QList<Data>>& data) const = 0;
+    virtual void UpdateDisplay(const QList<Data>& data) = 0;
     virtual ~FileBrowserObserver() = default;
 };
 

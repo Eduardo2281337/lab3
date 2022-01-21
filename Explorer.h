@@ -6,37 +6,46 @@
 #include "Data.h"
 #include "FileBrowserObserver.h"
 
-class IExplore {
+class ExploreInterface {
 public:
     virtual void explore(const QString& path) = 0;
-    virtual ~IExplore() {}
+    virtual ~ExploreInterface() { }
 
     // привязка наблюдателя
     void Attach(FileBrowserObserver* observer) {
         if (observer)
-            observer_ = observer;
+              observer_.push_back(observer);
     }
-
+    void Detach(FileBrowserObserver* observer) {
+        if (observer)
+            observer_.removeOne(observer);
+    }
     // событие окончания формирования данных
-    void OnFinish(const std::unique_ptr<QList<Data> >& data) const {
-        observer_->UpdateDisplay(data);
+    void OnFinish(const QList<Data>& data) const {
+        for (auto& x : observer_)
+            x->UpdateDisplay(data);
     }
-
+    void OverSub(FileBrowserObserver* observer) {
+        if (observer) {
+            observer_.removeOne(observer);
+            observer_.push_back(observer);
+        }
+    }
 private:
-    FileBrowserObserver* observer_;
+    QList<FileBrowserObserver*> observer_;
 };
 
 class Explorer
 {
 private:
-    IExplore *p = nullptr;
+    ExploreInterface *p = nullptr;
 public:
     Explorer() = default;
-    explicit Explorer(IExplore* l) : p(l) {}
+    explicit Explorer(ExploreInterface* l) : p(l) {}
     void explore(const QString& path) {
         p->explore(path);
     }
-    void setStrategy(IExplore* strategy) {
+    void setStrategy(ExploreInterface* strategy) {
         if (p)
             delete p;
         p = strategy;

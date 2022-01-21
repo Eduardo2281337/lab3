@@ -2,7 +2,7 @@
 #define GROUPBYTYPES_H
 #include "Explorer.h"
 
-class GroupByTypes : public IExplore {
+class GroupByTypes : public ExploreInterface {
 public:
     explicit GroupByTypes() = default;
     virtual ~GroupByTypes() {}

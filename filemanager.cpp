@@ -4,7 +4,7 @@
 #include "GroupByTypes.h"
 #include "GroupByFolders.h"
 #include "FileBrowserModel.h"
-#include "ListViewAdapter.h"
+#include "ListViewMediator.h"
 #include "Charts.h"
 
 #include <QDebug>
@@ -19,12 +19,14 @@ FileManager::FileManager(QWidget *parent) :
     ui->setupUi(this);
     dirModel = new QFileSystemModel(this);
 
-    list_view_adapter = new ListViewAdapter(ui->stackedWidget->layout());
-    pie_chart = new PieChart(ui->stackedWidget->layout());
-    bar_chart = new BarChart(ui->stackedWidget->layout());
+    observers.push_back(new ListViewMediator(ui->stackedWidget->layout()));
+    observers.push_back(new PieChart(ui->stackedWidget->layout()));
+    observers.push_back(new BarChart(ui->stackedWidget->layout()));
 
-    FileBrowserView = list_view_adapter;
-    groupingStrategy->Attach(FileBrowserView);
+    for (auto& x : observers) {
+        FolderGrouping->Attach(x);
+        TypesGrouping->Attach(x);
+    }
     this->setMinimumSize(1200, 500);
     dirModel->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden);
     dirModel->setRootPath(QDir::currentPath());
@@ -42,11 +44,7 @@ FileManager::~FileManager()
     delete ui;
     delete dirModel;
 
-    // очищаем память из под адаптеров
-    delete list_view_adapter;
-    delete pie_chart;
-    delete bar_chart;
-
+    qDeleteAll(observers);
     delete FolderGrouping;
     delete TypesGrouping;
 }
@@ -63,20 +61,6 @@ void FileManager::displayTableModel()
 
 void FileManager::selectionDisplay(int index)
 {
-    switch(index)
-    {
-        case 0:
-            FileBrowserView = list_view_adapter;
-            break;
-        case 1:
-            FileBrowserView = pie_chart;
-            break;
-        case 2:
-            FileBrowserView = bar_chart;
-            break;
-    }
-    groupingStrategy->Attach(FileBrowserView);
-    groupingStrategy->explore(path);
     ui->stackedWidget->setCurrentIndex(index);
 }
 
@@ -93,7 +77,6 @@ void FileManager::selectionGroup(int index)
             std::exit(-1);
             break;
     }
-    groupingStrategy->Attach(FileBrowserView);
     groupingStrategy->explore(path);
 }
 
@@ -104,4 +87,5 @@ void FileManager::selectionChanged(const QItemSelection &selected, const QItemSe
     QModelIndexList indexes = selected.indexes();
     path = dirModel->filePath(indexes[0]);
     groupingStrategy->explore(path);
+
 }

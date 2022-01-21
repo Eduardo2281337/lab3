@@ -3,7 +3,7 @@
 #include "Explorer.h"
 
 
-class GroupByFolders final : public IExplore
+class GroupByFolders final : public ExploreInterface
 {
 public:
     explicit GroupByFolders() = default;
