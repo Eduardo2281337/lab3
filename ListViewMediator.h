@@ -4,11 +4,14 @@
 #include "FileBrowserObserver.h"
 #include "FileBrowserModel.h"
 #include <QTableView>
+#include "MySortingFilterProxyModel.h"
+
 
 class ListViewMediator : public FileBrowserObserver
 {
 private:
     FileBrowserModel* model;
+    MySortFilterProxyModel* proxyModel;
     QTableView* view;
 public:
     explicit ListViewMediator(QLayout* l);

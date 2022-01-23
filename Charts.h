@@ -29,11 +29,12 @@ public:
     void UpdateDisplay(const QList<Data>& data) override;
     void setDataToChart(const QList<Data>& data) const;
     void removeSeriesFromChart(QChart* c) const;
-    virtual QAbstractSeries* addDataToSeries(const QList<Data>& data) const = 0;
-    void addSeriesToChart(QAbstractSeries* series) const;
+    virtual QList<QAbstractSeries*> addDataToSeries(const QList<Data>& data) const = 0;
+    void addSeriesToChart(QList<QAbstractSeries*> series) const;
+    QChart* chart_model;
 private:
     QChartView* chart_view;
-    QChart* chart_model;
+
 };
 
 // создание круговой диаграммы
@@ -42,7 +43,7 @@ class PieChart : public Charts
 public:
     explicit PieChart(QLayout* l);
     PieChart() = default;
-    QAbstractSeries * addDataToSeries(const QList<Data> &data) const override;
+    QList<QAbstractSeries*> addDataToSeries(const QList<Data> &data) const override;
 };
 
 //создание вертикальной диаграммы
@@ -51,7 +52,16 @@ class BarChart : public Charts
 public:
     explicit BarChart(QLayout* l);
     BarChart() = default;
-    QAbstractSeries * addDataToSeries(const QList<Data> &data) const override;
+    QList<QAbstractSeries*> addDataToSeries(const QList<Data> &data) const override;
 };
+
+class AreaChart : public Charts
+{
+public:
+    explicit AreaChart(QLayout* l);
+    AreaChart() = default;
+    QList<QAbstractSeries*> addDataToSeries(const QList<Data> &data) const override;
+};
+
 
 #endif // CHARTSWIDGET_H

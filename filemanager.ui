@@ -55,6 +55,11 @@
            <string>Display in bar</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>Display in area</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>

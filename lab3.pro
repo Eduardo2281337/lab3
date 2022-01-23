@@ -20,6 +20,7 @@ SOURCES += \
         GroupByFolders.cpp \
         GroupByTypes.cpp \
         ListViewMediator.cpp \
+        MySortingFilterProxyModel.cpp \
         filemanager.cpp \
         main.cpp
 
@@ -37,6 +38,7 @@ HEADERS += \
     GroupByFolders.h \
     GroupByTypes.h \
     ListViewMediator.h \
+    MySortingFilterProxyModel.h \
     filemanager.h
 
 FORMS += \

@@ -22,6 +22,7 @@ FileManager::FileManager(QWidget *parent) :
     observers.push_back(new ListViewMediator(ui->stackedWidget->layout()));
     observers.push_back(new PieChart(ui->stackedWidget->layout()));
     observers.push_back(new BarChart(ui->stackedWidget->layout()));
+    observers.push_back(new AreaChart(ui->stackedWidget->layout()));
 
     for (auto& x : observers) {
         FolderGrouping->Attach(x);

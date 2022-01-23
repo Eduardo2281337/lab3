@@ -1,10 +1,13 @@
 #include "Charts.h"
 #include <QBarSeries>
 #include <QPieSeries>
+#include <QAreaSeries>
+#include <QLineSeries>
 #include <QBarSet>
 #include <QGraphicsLayout>
 #include <QChartView>
 #include <QLayout>
+
 
 using namespace QtCharts;
 
@@ -42,8 +45,11 @@ void Charts::setChart(const QList<Data> &data) const
     }
     // элементы идущие после 6 относим к маленьким
     // подсчитываем их общий размер и размещаем их в категорию others
-    QList<Data> data2 = data;
     if (data.size() > 6) {
+        QList<Data> data2;
+        for (int i = 0; i < 6 ; i++) {
+            data2.append(data.at(i));
+        }
         qint64 others_size = 0;
         auto it = data.begin() + 5;
         while (it != data.end()) {
@@ -53,9 +59,11 @@ void Charts::setChart(const QList<Data> &data) const
 
         double percent = double(others_size * 100) / total_size;
         data2.push_back(Data("Others", QString::number(others_size), QString::number(percent, 'f', 2).append(" %"), (qreal)others_size / total_size));
+        setDataToChart(data2);
+        return;
     }
     // набор данных устанавливаются в диаграмму
-    setDataToChart(data2);
+    setDataToChart(data);
 }
 
 void Charts::addWidgetToLayout(QLayout *l)
@@ -74,9 +82,11 @@ void Charts::removeSeriesFromChart(QChart *c) const
     c->removeAllSeries();
 }
 
-void Charts::addSeriesToChart(QAbstractSeries *series) const
+void Charts::addSeriesToChart(QList<QAbstractSeries*> series) const
 {
-    chart_model->addSeries(series);
+    for (auto& x : series) {
+        chart_model->addSeries(x);
+    }
 }
 
 
@@ -85,15 +95,21 @@ void Charts::addSeriesToChart(QAbstractSeries *series) const
 void Charts::setDataToChart(const QList<Data> &data) const
 {
     removeSeriesFromChart(chart_model);
-    QAbstractSeries* series = addDataToSeries(data);
+    QList<QAbstractSeries*> series = addDataToSeries(data);
     addSeriesToChart(series);
+    // ставить оси только для графика Area
+    if (dynamic_cast<QAreaSeries* >(series.first())) {
+        chart_model->createDefaultAxes();
+        chart_model->axes(Qt::Vertical).first()->setRange(0, 100);
+    }
+
 }
 
 
 BarChart::BarChart(QLayout *l) : Charts(l) {}
 
 
-QAbstractSeries *BarChart::addDataToSeries(const QList<Data> &data) const
+QList<QAbstractSeries*> BarChart::addDataToSeries(const QList<Data> &data) const
 {
     QBarSeries* series = new QBarSeries();
     series->setBarWidth(1);
@@ -102,21 +118,40 @@ QAbstractSeries *BarChart::addDataToSeries(const QList<Data> &data) const
         set->append(item._ratio);
         series->append(set);
     }
-    return series;
+    return QList<QAbstractSeries*> {series};
 }
 
 
 PieChart::PieChart(QLayout *l) : Charts(l) {}
 
 
-QAbstractSeries *PieChart::addDataToSeries(const QList<Data> &data) const
+QList<QAbstractSeries*> PieChart::addDataToSeries(const QList<Data> &data) const
 {
     QPieSeries* series = new QPieSeries();
     series->setPieSize(1);
     for (auto& item : data) {
         series->append(item._name + " (" + item._percent.toHtmlEscaped() + ")", item._ratio);
     }
-    return series;
+    return QList<QAbstractSeries*> {series};
 }
 
+AreaChart::AreaChart(QLayout *l) : Charts(l) {}
 
+QList<QAbstractSeries*> AreaChart::addDataToSeries(const QList<Data> &data) const
+{
+    QList<QAbstractSeries*> area_series;
+    QLineSeries* lower_series = 0;
+    for (int i = 0; i < data.size(); i++) {
+        QLineSeries *upper_series = new QLineSeries();
+        if (lower_series) {
+            QVector<QPointF> points = lower_series->pointsVector();
+            *upper_series << QPointF(0, data.at(i)._ratio * 100 + points[0].y()) << QPointF(1, data.at(i)._ratio * 100 + points[0].y());
+        } else {
+            *upper_series << QPointF(0, data.at(i)._ratio * 100) << QPointF(1, data.at(i)._ratio * 100);
+        }
+        area_series.append(new QAreaSeries(upper_series, lower_series));
+        area_series.at(i)->setName(data.at(i)._name + " (" + data.at(i)._percent + ")");
+        lower_series = upper_series;
+    }
+    return area_series;
+}
