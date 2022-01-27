@@ -21,11 +21,22 @@ int FileBrowserModel::columnCount(const QModelIndex& parent) const
 
   QVariant FileBrowserModel::data(const QModelIndex& index, int role) const
   {
+      if (role == Qt::InitialSortOrderRole) {
+          switch (index.column()) {
+            case 0: return _data[index.row()]._name;
+            case 1: return _data[index.row()]._size;
+            case 2: {
+                if (_data[index.row()]._ratio < 0)
+                    return 0.0099;
+                else return _data[index.row()]._ratio * 100;
+            }
+          }
+      }
       if (!index.isValid() || _data.count() <= index.row() || (role != Qt::DisplayRole && role != Qt::EditRole)) {
           return QVariant();
       }
       switch (index.column()) {
-        case 0: return _data[index.row()]._name;
+      case 0: return _data[index.row()]._name;
         case 1:
         {
             QLocale locale(QLocale::English);

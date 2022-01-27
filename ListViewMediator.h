@@ -6,7 +6,6 @@
 #include <QTableView>
 #include "MySortingFilterProxyModel.h"
 
-
 class ListViewMediator : public FileBrowserObserver
 {
 private:

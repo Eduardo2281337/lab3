@@ -3,18 +3,16 @@
 #include <QLayout>
 #include <QHeaderView>
 
-
 ListViewMediator::ListViewMediator(QLayout* l)
 {
     model = new FileBrowserModel();
     proxyModel = new MySortFilterProxyModel();
     proxyModel->setSourceModel(model);
-    proxyModel->sort(-1, Qt::AscendingOrder);
+    qDebug() << proxyModel->filterRole();
     view = new QTableView();
     view->setModel(proxyModel);
     view->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     view->setSortingEnabled(true);
-//    view->sortByColumn(1, Qt::AscendingOrder);
     l->addWidget(view);
 }
 
