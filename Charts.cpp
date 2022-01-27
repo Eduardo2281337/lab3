@@ -34,7 +34,7 @@ void Charts::setChart(const QList<Data> &data) const
     // подсчитываем общий размер папки
     qint64 total_size = 0;
     for (auto& x : data) {
-        total_size += x._size.toLongLong();
+        total_size += x._size;
     }
     chart_model->setTitle("");
     // в случае когда папка пуста выводим надпись
@@ -53,12 +53,12 @@ void Charts::setChart(const QList<Data> &data) const
         qint64 others_size = 0;
         auto it = data.begin() + 5;
         while (it != data.end()) {
-            others_size += it->_size.toLongLong();
+            others_size += it->_size;
             it++;
         }
 
         double percent = double(others_size * 100) / total_size;
-        data2.push_back(Data("Others", QString::number(others_size), QString::number(percent, 'f', 2).append(" %"), (qreal)others_size / total_size));
+        data2.push_back(Data("Others", others_size, QString::number(percent, 'f', 2).append(" %"), (qreal)others_size / total_size));
         setDataToChart(data2);
         return;
     }

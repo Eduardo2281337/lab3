@@ -55,9 +55,9 @@ QList<Data> GroupByTypes::CombineData(const QMap<QString, qint64> &FileTypesList
     auto totalSize = Common::sumSizes(FileTypesList);
     for (auto&& x : FileTypesPercantage) {
         if (x.first < 0) {
-            data.push_back(Data(x.second, QString::number(FileTypesList.value(x.second)), QString("< 0.01 %"), (qreal)FileTypesList.value(x.second)/ totalSize));
+            data.push_back(Data(x.second, FileTypesList.value(x.second), QString("< 0.01 %"), (qreal)FileTypesList.value(x.second)/ totalSize));
         } else {
-        data.push_back(Data("*." + x.second, QString::number(FileTypesList.value(x.second)), QString::number(x.first, 'f', 2).append(" %"), (qreal)FileTypesList.value(x.second)/ totalSize));
+        data.push_back(Data("*." + x.second, FileTypesList.value(x.second), QString::number(x.first, 'f', 2).append(" %"), (qreal)FileTypesList.value(x.second)/ totalSize));
         }
     }
     return data;

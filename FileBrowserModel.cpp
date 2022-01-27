@@ -29,7 +29,11 @@ int FileBrowserModel::columnCount(const QModelIndex& parent) const
         case 1:
         {
             QLocale locale(QLocale::English);
+<<<<<<< Updated upstream
             return locale.formattedDataSize(_data[index.row()]._size.toInt());
+=======
+            return locale.formattedDataSize(_data[index.row()]._size);
+>>>>>>> Stashed changes
         }
         case 2: return _data[index.row()]._percent;
         default: return QVariant();
