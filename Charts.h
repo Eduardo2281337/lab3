@@ -30,6 +30,7 @@ public:
     void setDataToChart(const QList<Data>& data) const;
     void removeSeriesFromChart(QChart* c) const;
     virtual QList<QAbstractSeries*> addDataToSeries(const QList<Data>& data) const = 0;
+    virtual void addAxes() const;
     void addSeriesToChart(QList<QAbstractSeries*> series) const;
     QChart* chart_model;
 private:
@@ -59,6 +60,7 @@ class AreaChart : public Charts
 {
 public:
     explicit AreaChart(QLayout* l);
+    void addAxes() const override;
     AreaChart() = default;
     QList<QAbstractSeries*> addDataToSeries(const QList<Data> &data) const override;
 };

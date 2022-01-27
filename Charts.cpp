@@ -82,6 +82,11 @@ void Charts::removeSeriesFromChart(QChart *c) const
     c->removeAllSeries();
 }
 
+void Charts::addAxes() const
+{
+
+}
+
 void Charts::addSeriesToChart(QList<QAbstractSeries*> series) const
 {
     for (auto& x : series) {
@@ -97,12 +102,7 @@ void Charts::setDataToChart(const QList<Data> &data) const
     removeSeriesFromChart(chart_model);
     QList<QAbstractSeries*> series = addDataToSeries(data);
     addSeriesToChart(series);
-    // ставить оси только для графика Area
-    if (dynamic_cast<QAreaSeries* >(series.first())) {
-        chart_model->createDefaultAxes();
-        chart_model->axes(Qt::Vertical).first()->setRange(0, 100);
-    }
-
+    addAxes();
 }
 
 
@@ -136,6 +136,13 @@ QList<QAbstractSeries*> PieChart::addDataToSeries(const QList<Data> &data) const
 }
 
 AreaChart::AreaChart(QLayout *l) : Charts(l) {}
+
+void AreaChart::addAxes() const
+{
+    chart_model->createDefaultAxes();
+    QList<QAbstractAxis *> vertical_axes = chart_model->axes(Qt::Vertical);
+    vertical_axes.first()->setRange(0, 100);
+}
 
 QList<QAbstractSeries*> AreaChart::addDataToSeries(const QList<Data> &data) const
 {
