@@ -81,9 +81,9 @@ QList<Data> GroupByFolders::CombineData(const QMap<QString, qint64> &FoldersAndT
     auto totalSize = Common::sumSizes(FoldersAndTypes);
     for (auto&& x : FoldersAndPercentage) {
         if (x.first < 0) {
-            data.push_back(Data(x.second, FoldersAndTypes.value(x.second), QString("< 0.01 %"), (qreal)FoldersAndTypes.value(x.second)/ totalSize));
+            data.push_back(Data(x.second, FoldersAndTypes.value(x.second), -(qreal)FoldersAndTypes.value(x.second)/ totalSize));
         } else {
-            data.push_back(Data(x.second, FoldersAndTypes.value(x.second), QString::number(x.first, 'f', 2).append(" %"),(qreal)FoldersAndTypes.value(x.second)/ totalSize));
+            data.push_back(Data(x.second, FoldersAndTypes.value(x.second), (qreal)FoldersAndTypes.value(x.second)/ totalSize));
         }
     }
     return data;

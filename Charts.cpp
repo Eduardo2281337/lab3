@@ -57,8 +57,8 @@ void Charts::setChart(const QList<Data> &data) const
             it++;
         }
 
-        double percent = double(others_size * 100) / total_size;
-        data2.push_back(Data("Others", others_size, QString::number(percent, 'f', 2).append(" %"), (qreal)others_size / total_size));
+
+        data2.push_back(Data("Others", others_size, (qreal)others_size / total_size));
         setDataToChart(data2);
         return;
     }
@@ -114,9 +114,15 @@ QList<QAbstractSeries*> BarChart::addDataToSeries(const QList<Data> &data) const
     QBarSeries* series = new QBarSeries();
     series->setBarWidth(1);
     for (auto& item : data) {
-        QBarSet* set = new QBarSet(item._name + " (" + item._percent.toHtmlEscaped() + ")");
-        set->append(item._ratio);
-        series->append(set);
+        if (item._ratio < 0) {
+            QBarSet* set = new QBarSet(item._name + QString("(< 0.01 %)").toHtmlEscaped());
+            set->append(std::abs(item._ratio));
+            series->append(set);
+        } else {
+            QBarSet* set = new QBarSet(item._name + "(" + QString::number(item._ratio * 100 , 'f', 2) + " %)");
+            set->append(item._ratio);
+            series->append(set);
+        }
     }
     return QList<QAbstractSeries*> {series};
 }
@@ -130,7 +136,11 @@ QList<QAbstractSeries*> PieChart::addDataToSeries(const QList<Data> &data) const
     QPieSeries* series = new QPieSeries();
     series->setPieSize(1);
     for (auto& item : data) {
-        series->append(item._name + " (" + item._percent.toHtmlEscaped() + ")", item._ratio);
+        if (item._ratio < 0) {
+            series->append(item._name + QString("(< 0.01 %)").toHtmlEscaped(), std::abs(item._ratio));
+        } else {
+            series->append(item._name + "(" + QString::number(item._ratio * 100, 'f', 2) + " %)", item._ratio);
+        }
     }
     return QList<QAbstractSeries*> {series};
 }
@@ -157,7 +167,12 @@ QList<QAbstractSeries*> AreaChart::addDataToSeries(const QList<Data> &data) cons
             *upper_series << QPointF(0, data.at(i)._ratio * 100) << QPointF(1, data.at(i)._ratio * 100);
         }
         area_series.append(new QAreaSeries(upper_series, lower_series));
-        area_series.at(i)->setName(data.at(i)._name + " (" + data.at(i)._percent + ")");
+        if (data.at(i)._ratio < 0) {
+            area_series.at(i)->setName(data.at(i)._name + QString("(< 0.01 %)").toHtmlEscaped());
+        } else {
+            area_series.at(i)->setName(data.at(i)._name + " (" + QString::number(data.at(i)._ratio * 100, 'f', 2) + " %)");
+        }
+
         lower_series = upper_series;
     }
     return area_series;
